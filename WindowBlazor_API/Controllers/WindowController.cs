@@ -22,10 +22,10 @@ namespace WindowBlazor_API.Controllers
             return Ok(objList);
         }
 
-        [HttpGet("id")]
-        public async Task<IActionResult> Get(int? id)
+        [HttpGet("{windowId}")]
+        public async Task<IActionResult> Get(int? windowId)
         {
-            if (id == null || id == 0)
+            if (windowId == null || windowId == 0)
             {
                 return BadRequest(new ErrorModelDTO()
                 {
@@ -34,7 +34,7 @@ namespace WindowBlazor_API.Controllers
                     StatusCode = StatusCodes.Status400BadRequest
                 });
             }
-            var obj = await _windowRepository.Get(id.GetValueOrDefault());
+            var obj = await _windowRepository.Get(windowId.GetValueOrDefault());
             if (obj == null)
             {
                 return NotFound(new ErrorModelDTO()

@@ -1,0 +1,134 @@
+﻿@page "/cart"
+@inject ILocalStorageService _localStorage
+@inject IWindowService _windowService
+@inject ICartService _cartService
+
+
+@* //TODO: Fix Cart component *@
+
+@if (IsProcessing)
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+        <img src="images/ajax-loader.gif" />
+    </div>
+}
+else
+{
+	@if (!ShoppingCart.Any())
+	{
+		<div>
+			Please add items to shopping cart.
+		</div>
+	}
+	else
+	{
+		<div class="container mt-4">
+			<div class="card">
+				<div class="card-header bg-dark text-light ml-0 ">
+					<div class="row">
+						<div class="col-6  pt-2">
+							Shopping Cart
+						</div>
+						<div class="col-6 col-md-3 offset-md-3 text-end">
+							<a href="/" class="btn btn-outline-info form-control">Continue Shopping</a>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+
+					@foreach (var item in ShoppingCart)
+					{
+
+						<div class="row">
+							
+							<div class="col-9 text-sm-center text-md-start col-md-4 pt-lg-1 ">
+								<h4><strong>@item.Window.Name</strong></h4>
+								<p>Count: @item.Count</p>
+								@foreach(var sub in @item.Window.SubElements)
+								{
+									<p><b>Element:</b> @sub.Element <b>Type:</b> @sub.Type <b>Height:</b> @sub.Height  <b>Width:</b> @sub.Width </p>
+								}
+								<div class="col-6 col-sm-4 col-lg-6">
+									<button @onclick="()=>Increment(item.WindowId,1)" type="submit" class="btn btn-primary">
+										<i class="bi bi-plus-square"></i>
+									</button>
+									<button @onclick="()=>Decrement(item.WindowId,1)" type="submit" class="btn btn-warning">
+										<i class="bi bi-dash-square"></i>
+									</button>
+								</div>
+								<div class="col-2 col-sm-4 col-lg-2 text-right">
+									<button @onclick="()=>Decrement(item.WindowId,0)" type="submit" class="btn btn-outline-danger">
+										<i class="bi bi-trash-fill"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					}
+					<hr />
+
+					
+
+
+				</div>
+				<div class="card-footer">
+					<div class="col-12  col-md-3 offset-md-9">
+						<a href="/summary" class="btn btn-secondary form-control">Summary</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+@code {
+    public bool IsProcessing { get; set; } = false;
+	private List<ShoppingCart> ShoppingCart = new List<ShoppingCart>();
+	private IEnumerable<WindowDTO> Windows { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		IsProcessing = true;
+
+		Windows = await _windowService.GetAll();
+		await LoadCart();
+		IsProcessing = false;
+	}
+
+	private async Task LoadCart()
+	{
+		
+		ShoppingCart = await _localStorage.GetItemAsync<List<ShoppingCart>>(SD.ShoppingCart);
+		foreach (var cart in ShoppingCart)
+		{
+			cart.Window = Windows.FirstOrDefault(u => u.Id == cart.WindowId);
+		}
+	}
+
+	private async Task Increment(int WindowId, int Count)
+	{
+		IsProcessing = true;
+		await _cartService.IncrementCart(new()
+			{
+				Count = Count,
+				WindowId = WindowId,
+				
+			});
+
+		await LoadCart();
+		IsProcessing = false;
+	}
+
+	private async Task Decrement(int WindowId, int Count)
+	{
+		IsProcessing = true;
+		await _cartService.DecrementCart(new()
+			{
+				Count = Count,
+				WindowId = WindowId,
+				
+			});
+
+		await LoadCart();
+		IsProcessing = false;
+	}
+}

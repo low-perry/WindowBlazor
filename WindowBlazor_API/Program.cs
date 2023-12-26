@@ -16,6 +16,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IWindowRepository, WindowRepository>();
 builder.Services.AddScoped<ISubElementRepository, SubElementRepository>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("WindowBlazor", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -27,6 +36,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("WindowBlazor");
 
 app.UseAuthorization();
 

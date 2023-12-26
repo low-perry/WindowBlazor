@@ -24,8 +24,4 @@
     <ProjectReference Include="..\WindowBlazor_Models\WindowBlazor_Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Service\IService\" />
-  </ItemGroup>
-
 </Project>

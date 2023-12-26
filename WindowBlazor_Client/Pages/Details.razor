@@ -1,0 +1,85 @@
+﻿@page "/details/{windowId:int}"
+@inject IWindowService _windowService
+@inject ICartService _cartService
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _jsRuntime
+
+@using WindowBlazor_Client.ViewModels
+
+@if (IsProcessing)
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+        <img src="images/ajax-loader.gif" />
+    </div>
+}
+else
+{
+    <div class="card" style="width: 18rem;">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">@Window.Name</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Quantity of Windows: @Window.QuantityOfWindows</h6>
+            <h6 class="card-subtitle mb-2 text-muted">Total SubElements: @Window.TotalSubElements</h6>
+            <div class="card">
+                <ul class="list-group list-group-flush">
+                    @foreach (var subElement in Window.SubElements)
+                    {
+                        <li class="list-group-item p-2 mt-2 mb-2"><b>Element:</b> @subElement.Element, <b>Type:</b> @subElement.Type, <b>Height:</b> @subElement.Height, <b>Width:</b> @subElement.Width</li>
+                    }
+                </ul>
+            </div>
+            <EditForm OnValidSubmit="AddToCart" Model="DetailsVM" method="post">
+                <div class="col-10">
+                    <label>Count:</label> <InputNumber @bind-Value="DetailsVM.Count" class="form-control" />
+                    <ValidationMessage For="()=>DetailsVM.Count"></ValidationMessage>
+                </div>
+                <div class="col-12 col-md-6 pb-1">
+                    <a class="btn btn-success form-control " href="/">Back to Home</a>
+                </div>
+                <div class="col-12 col-md-6 pb-1">
+                    @if(DetailsVM.Count > 0)
+                    {
+                        <button type="submit" value="Add to Cart" class="btn btn-primary form-control">Add to Cart</button>
+                    }
+                    else
+                    {
+                        <button type="submit" value="Add to Cart" disabled class="btn btn-primary form-control">Add to Cart</button>
+                    }
+                   
+
+
+                </div>
+            </EditForm>
+           
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int WindowId { get; set; }
+    public WindowDTO Window { get; set; } = new();
+    public bool IsProcessing { get; set; }
+    public DetailsVM DetailsVM { get; set; } = new DetailsVM();
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsProcessing = true;
+        Window = await _windowService.Get(WindowId);
+        IsProcessing = false;
+    }
+
+private async Task AddToCart()
+    {
+        ShoppingCart shoppingCart = new()
+            {
+                Count = DetailsVM.Count,
+                WindowId = WindowId,
+            };
+
+        await _cartService.IncrementCart(shoppingCart);
+        _navigationManager.NavigateTo("/");
+        //TODO:Check why this line breaks
+        //await _jsRuntime.ToastrSuccess("Product added to cart successfully");
+    }
+}
+}

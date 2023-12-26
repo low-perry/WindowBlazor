@@ -1,9 +1,58 @@
 ﻿@page "/"
+@inject IWindowService _windowService
 
-<PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+@if (IsProcessing)
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+        <img src="images/ajax-loader.gif" />
+    </div>
+}
+else
+{
+<div class="container">
+    <div class="row  pb-3 pt-3 backgroundWhite">
+        
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+        @foreach (var window in Windows)
+        {
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@window.Name</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Quantity of Windows: @window.QuantityOfWindows</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Total SubElements: @window.TotalSubElements</h6>
+                        <div class="card">
+                            <ul class="list-group list-group-flush">
+                                @foreach (var subElement in window.SubElements)
+                                {
+                                    <li class="list-group-item p-2 mt-2 mb-2"><b>Element:</b> @subElement.Element, <b>Type:</b> @subElement.Type, <b>Height:</b> @subElement.Height, <b>Width:</b> @subElement.Width</li>
+                                }
+                            </ul>
+                        </div>
+
+                        <div class="col-12 p-1 mt-auto">
+                            <a href="@($"/details/{window.Id}")" class="btn btn-dark form-control btn-sm p-2" style="height:40px">View Details</a>
+                        </div>
+                    </div>
+                </div>
+        }
+ 
+    </div>
+</div>
+}
+
+
+@code {
+    public bool IsProcessing { get; set; } = false;
+    public IEnumerable<WindowDTO> Windows { get; set; } = new List<WindowDTO>();
+    
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsProcessing = true;
+        Windows = await _windowService.GetAll();
+        IsProcessing = false;
+    }
+}

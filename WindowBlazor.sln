@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowBlazor_Common", "Wind
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowBlazor_DataAccess", "WindowBlazor_DataAccess\WindowBlazor_DataAccess.csproj", "{5CFBCB33-28FD-46C5-878F-4BA6475FF91F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowBlazor_API", "WindowBlazor_API\WindowBlazor_API.csproj", "{DDDFB102-0FA5-48AF-A27B-B08C688D5747}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowBlazor_API", "WindowBlazor_API\WindowBlazor_API.csproj", "{DDDFB102-0FA5-48AF-A27B-B08C688D5747}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
