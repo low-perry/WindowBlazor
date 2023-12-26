@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WindowBlazor_DataAccess.Data;
 
@@ -11,9 +12,11 @@ using WindowBlazor_DataAccess.Data;
 namespace WindowBlazorDataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231225101005_WindowReady")]
+    partial class WindowReady
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,17 +103,12 @@ namespace WindowBlazorDataAccess.Migrations
             modelBuilder.Entity("WindowBlazor_DataAccess.SubElement", b =>
                 {
                     b.HasOne("WindowBlazor_DataAccess.Window", "Window")
-                        .WithMany("SubElements")
+                        .WithMany()
                         .HasForeignKey("WindowId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Window");
-                });
-
-            modelBuilder.Entity("WindowBlazor_DataAccess.Window", b =>
-                {
-                    b.Navigation("SubElements");
                 });
 #pragma warning restore 612, 618
         }

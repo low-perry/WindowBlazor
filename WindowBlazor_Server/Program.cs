@@ -5,18 +5,25 @@ using WindowBlazor_DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using WindowBlazor_Business.Repository.IRepository;
 using WindowBlazor_Business.Repository;
+using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddSyncfusionBlazor();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IWindowRepository, WindowRepository>();
+builder.Services.AddScoped<ISubElementRepository, SubElementRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
+
+//Register Syncfusion license
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf0x3WmFZfVpgcF9FaVZSRmYuP1ZhSXxQd0dhXH9ac31WRGNfU0w=");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

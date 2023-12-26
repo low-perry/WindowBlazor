@@ -1,0 +1,108 @@
+﻿@page "/window/subelement/{Id:int}"
+@inject IWindowRepository _windowRepository
+@inject ISubElementRepository _subElementRepository
+
+<h3 class="card-title text-primary mb-3 ml-3">SubElement Management</h3>
+@if (IsLoading)
+{
+    //TODO: Add spinner
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row border p-2 mb-4">
+        <div class="col-11">
+            <div class="card-body">
+                <h4>@Window.Name</h4>
+                <p>Quantity of Windows: @Window.QuantityOfWindows</p>
+                <p>Total SubElements: @Window.TotalSubElements</p>
+            </div>
+        </div>
+    </div>
+
+    <SfGrid @ref="subElementGrid" DataSource="@SubElements" AllowPaging="true" AllowFiltering="true" AllowSorting="true" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" ShowDeleteConfirmDialog="true" AllowDeleting="true"></GridEditSettings>
+        <GridEvents OnActionBegin="ActionHandler" TValue="SubElementDTO"></GridEvents>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridSortSettings AllowUnsort="false">
+            <GridSortColumns>
+                <GridSortColumn Field="Element" Direction="SortDirection.Ascending"></GridSortColumn>
+            </GridSortColumns>
+        </GridSortSettings>
+        <GridPageSettings PageSize="5" PageCount="5" PageSizes="true"></GridPageSettings>
+        
+        <GridColumns>
+            <GridColumn Field=@nameof(SubElementDTO.Id) HeaderText="ID" IsPrimaryKey="true" AllowAdding="false" ></GridColumn>
+            <GridColumn Field=@nameof(SubElementDTO.Element) HeaderText="Element" ValidationRules="@(new ValidationRules{ Required=true})"></GridColumn>
+            <GridColumn Field=@nameof(SubElementDTO.Type) HeaderText=" Type"  Width="130" ></GridColumn>
+                
+            <GridColumn Field=@nameof(SubElementDTO.Height) HeaderText="Height"  Width="120"></GridColumn>
+            <GridColumn Field=@nameof(SubElementDTO.Width) HeaderText="Width"  Width="150"></GridColumn>
+            <GridColumn HeaderText="Manage Records" Width="150">
+                <GridCommandColumns>
+                    <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-edit", CssClass = "e-flat" })"></GridCommandColumn>
+                    <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-delete", CssClass = "e-flat" })"></GridCommandColumn>
+                    <GridCommandColumn Type="CommandButtonType.Save" ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-update", CssClass = "e-flat" })"></GridCommandColumn>
+                    <GridCommandColumn Type="CommandButtonType.Cancel" ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-cancel-icon", CssClass = "e-flat" })"></GridCommandColumn>
+                </GridCommandColumns>
+            </GridColumn>
+        </GridColumns>
+        
+    </SfGrid>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private WindowDTO Window { get; set; } = new WindowDTO();
+    private IEnumerable<SubElementDTO> SubElements { get; set; } = new List<SubElementDTO>();
+    private bool IsLoading { get; set; }
+    public SfGrid<SubElementDTO> subElementGrid;
+
+    IEnumerable<string> TypeList = new List<string>() { "Window", "Door" };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            IsLoading = true;
+            StateHasChanged();
+            Window = await _windowRepository.Get(Id);
+            SubElements = await _subElementRepository.GetAll(Id);
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    public async void ActionHandler(ActionEventArgs<SubElementDTO> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            args.Data.WindowId = Id;
+            if (args.Action == "Add")
+            {
+                await _subElementRepository.Create(args.Data);
+                SubElements = await _subElementRepository.GetAll(Id);
+                subElementGrid.Refresh();
+            }
+            if (args.Action == "Edit")
+            {
+                
+                await _subElementRepository.Update(args.Data);
+            }
+        }
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await _subElementRepository.Delete(args.Data.Id);
+            subElementGrid.Refresh();
+
+        }
+        
+    }
+
+   
+    
+
+}
+
+

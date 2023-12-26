@@ -14,6 +14,8 @@ namespace WindowBlazor_Business.Mapper
         public MappingProfile()
         {
             CreateMap<Category, CategoryDTO>().ReverseMap();
+            CreateMap<Window, WindowDTO>().ReverseMap();
+            CreateMap<SubElement, SubElementDTO>().ReverseMap();
         }
     }
 }

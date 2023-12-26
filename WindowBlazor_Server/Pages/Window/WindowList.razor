@@ -1,0 +1,106 @@
+﻿@page "/window"
+
+@inject IWindowRepository _windowRepository
+@inject IJSRuntime _jsRuntime
+
+<_DeleteConfirmation IsParentComponentProcessing="IsLoading" ConfirmationChanged="ConfirmDelete_Click"></_DeleteConfirmation>
+<div class="row mt-4">
+    <div class="col-6">
+        <h4 class="card-title text-primary">Window List</h4>
+    </div>
+    <div class="col-4 offset-2">
+        <a href="window/create" class="btn btn-primary form-control">Add New Window</a>
+    </div>
+    <div class="my-4 col-12">
+        @if(Windows.Any())
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Quantity of Windows</th>
+                        <th>Total SubElements</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var window in Windows)
+                    {
+                        <tr>
+                            <td>
+                                @window.Name
+                            </td>
+                            <td>
+                                @window.QuantityOfWindows
+                            </td>
+                            <td>
+                                @window.TotalSubElements
+                            </td>
+                             
+                            <td>
+                                <NavLink href="@($"window/edit/{window.Id}")" class="btn btn-primary">Edit</NavLink>
+                                <NavLink href="@($"window/subelement/{window.Id}")" class="btn btn-success">SubElements</NavLink>
+                                <button class="btn btn-danger" @onclick="() => HandleDelete(window.Id)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                
+            </table>
+        }
+        else
+        {
+            if (IsLoading)
+            {
+                //TODO: Add spinner
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <p><em>No Windows found.</em></p>  
+            }
+        }
+    </div>
+
+</div>
+@code {
+    private IEnumerable<WindowDTO> Windows { get; set; } = new List<WindowDTO>();
+    public bool IsLoading { get; set; }
+    private int DeleteWindowId { get; set; } = 0;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadWindows();
+        }
+    }
+
+    private async Task LoadWindows()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        Windows = await _windowRepository.GetAll();
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private void HandleDelete(int WindowId)
+    {
+        DeleteWindowId = WindowId;
+        _jsRuntime.InvokeVoidAsync("ShowDeleteConfirmationModal");
+    }
+
+    public async Task ConfirmDelete_Click(bool isDeleteConfirmed)
+    {
+        IsLoading = true;
+        if (isDeleteConfirmed && DeleteWindowId != 0)
+        {
+            //delete
+             await _windowRepository.Delete(DeleteWindowId);
+             await LoadWindows();
+            await _jsRuntime.InvokeVoidAsync("HideDeleteConfirmationModal");
+        }
+        IsLoading = false;
+    }
+}

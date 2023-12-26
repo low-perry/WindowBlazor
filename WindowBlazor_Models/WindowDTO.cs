@@ -5,16 +5,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WindowBlazor_DataAccess
+namespace WindowBlazor_Models
 {
-    public class Window
+    public class WindowDTO
     {
-        [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
+        [Range(1,int.MaxValue, ErrorMessage = "Quantity must be greater than 0")]
         public int QuantityOfWindows { get; set; }
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Total Sub Elements must be greater than 0")]
         public int TotalSubElements { get; set; }
-
-        public ICollection<SubElement> SubElements { get; set; }
+        public ICollection<SubElementDTO> SubElements { get; set; }
     }
 }
