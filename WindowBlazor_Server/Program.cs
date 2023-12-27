@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using WindowBlazor_Business.Repository.IRepository;
 using WindowBlazor_Business.Repository;
 using Syncfusion.Blazor;
+using Microsoft.AspNetCore.Identity;
+using WindowBlazor_Server.Service.IService;
+using WindowBlazor_Server.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +18,10 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddDefaultTokenProviders().AddDefaultUI().AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<IWindowRepository, WindowRepository>();
 builder.Services.AddScoped<ISubElementRepository, SubElementRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -42,8 +48,22 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+SeedDatase();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
+
+void SeedDatase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initialize();
+    }
+}
