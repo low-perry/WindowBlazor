@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WindowBlazor_Common\WindowBlazor_Common.csproj" />
     <ProjectReference Include="..\WindowBlazor_DataAccess\WindowBlazor_DataAccess.csproj" />
     <ProjectReference Include="..\WindowBlazor_Models\WindowBlazor_Models.csproj" />
   </ItemGroup>
