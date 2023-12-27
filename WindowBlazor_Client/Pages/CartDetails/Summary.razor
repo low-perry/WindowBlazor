@@ -2,6 +2,8 @@
 @inject ILocalStorageService _localStorage
 @inject IWindowService _windowService
 @inject IJSRuntime _jsRuntime
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 
 @if (IsProcessing)
 {
@@ -127,6 +129,15 @@ else
                 };
             Order.OrderDetails.Add(orderDetailDTO);
             Order.OrderHeader.OrderTotal += (item.Count);
+        }
+        if (await _localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails) != null)
+        {
+            var userInfo = await _localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails);
+            Order.OrderHeader.UserId = userInfo.Id;
+            Order.OrderHeader.Name = userInfo.Name;
+            Order.OrderHeader.Email = userInfo.Email;
+            Order.OrderHeader.PhoneNumber = userInfo.PhoneNumber;
+
         }
 
 
