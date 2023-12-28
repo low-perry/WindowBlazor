@@ -3,6 +3,7 @@
 @inject IWindowService _windowService
 @inject IJSRuntime _jsRuntime
 @inject IOrderService _orderService
+@inject NavigationManager _navigationManager
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
@@ -156,6 +157,7 @@ else
                     Order = Order
         };
             var orderDTOSaved = await _orderService.Create(orderProcessingDTO);
+            _navigationManager.NavigateTo("/");
 
             
         }
