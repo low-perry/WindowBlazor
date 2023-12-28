@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace WindowBlazor_Client.Pages.Authentication
 {
-    public partial class RedirectionToLogin
+    public partial class RedirectToLogin
     {
         [CascadingParameter]
         public Task<AuthenticationState> _authState { get; set; }
