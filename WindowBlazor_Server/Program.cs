@@ -29,7 +29,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();
 
 //Register Syncfusion license
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf0x3WmFZfVpgcF9FaVZSRmYuP1ZhSXxQd0dhXH9ac31WRGNfU0w=");
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWH1ceHRdR2RdVUJ1WEs=");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

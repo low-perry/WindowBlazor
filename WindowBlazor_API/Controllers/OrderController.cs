@@ -5,7 +5,7 @@ using WindowBlazor_Models;
 
 namespace WindowBlazor_API.Controllers
 {
-    [Route("api/[controller]/action")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class OrderController : ControllerBase
     {
@@ -46,5 +46,13 @@ namespace WindowBlazor_API.Controllers
             }
             return Ok(orderHeader);
         }
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] OrderProcessingDTO orderProcessingDTO)
+        {
+            orderProcessingDTO.Order.OrderHeader.OrderDate = DateTime.Now;
+            var result = await _orderRepository.Create(orderProcessingDTO.Order);
+            return Ok(result);
+        }
     }
+    
 }

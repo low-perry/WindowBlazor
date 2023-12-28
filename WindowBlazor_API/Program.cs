@@ -83,6 +83,7 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IWindowRepository, WindowRepository>();
 builder.Services.AddScoped<ISubElementRepository, SubElementRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("WindowBlazor", builder =>

@@ -2,6 +2,7 @@
 @inject ILocalStorageService _localStorage
 @inject IWindowService _windowService
 @inject IJSRuntime _jsRuntime
+@inject IOrderService _orderService
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
@@ -117,13 +118,13 @@ else
         foreach (var item in cart)
         {
             WindowDTO window = Windows.FirstOrDefault(u => u.Id == item.WindowId);
-            
+
 
             OrderDetailDTO orderDetailDTO = new()
                 {
                     WindowId = item.WindowId,
                     Count = item.Count,
-                    
+
                     WindowName = window.Name,
                     Window = window
                 };
@@ -146,6 +147,21 @@ else
     }
     private async Task HandleCheckout()
     {
-        
+        try
+        {
+            //IsProcessing = true;
+
+            var orderProcessingDTO = new OrderProcessingDTO()
+                {
+                    Order = Order
+        };
+            var orderDTOSaved = await _orderService.Create(orderProcessingDTO);
+
+            
+        }
+        catch (Exception e)
+        {
+            await _jsRuntime.ToastrError(e.Message);
+        }
     }
 }
