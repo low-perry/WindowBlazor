@@ -18,6 +18,7 @@ namespace WindowBlazor_DataAccess
         
         public double OrderTotal { get; set; }
 
+        [Required]
         public DateTime OrderDate { get; set; }
         [Required]
         public string Status { get; set; }

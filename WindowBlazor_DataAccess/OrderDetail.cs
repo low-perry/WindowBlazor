@@ -16,7 +16,7 @@ namespace WindowBlazor_DataAccess
 
         [Required]
         public int WindowtId { get; set; }
-        [ForeignKey("windowId")]
+        [ForeignKey("WindowId")]
         [NotMapped]
         public virtual Window Window { get; set; }
 

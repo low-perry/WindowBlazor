@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Net.Http;
+using System.Text;
 using WindowBlazor_Client.Service.IService;
 using WindowBlazor_Models;
 
@@ -16,6 +17,22 @@ namespace WindowBlazor_Client.Service
             _configuration = configuration;
             BaseServerUrl = _configuration.GetSection("BaseServerUrl").Value;
         }
+
+        public async Task<OrderDTO> Create(OrderProcessingDTO orderProcessingDTO)
+        {
+            var content = JsonConvert.SerializeObject(orderProcessingDTO);
+            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("api/order/create", bodyContent);
+            string responseResult = response.Content.ReadAsStringAsync().Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonConvert.DeserializeObject<OrderDTO>(responseResult);
+                return result;
+            }
+            return new OrderDTO();
+
+        }
+
         public async Task<OrderDTO> Get(int orderHeaderId)
         {
             var response = await _httpClient.GetAsync($"/api/order/{orderHeaderId}");
