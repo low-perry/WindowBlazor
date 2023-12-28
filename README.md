@@ -31,7 +31,7 @@ Start the project.
 
 # Progress OnGoing:
 
-There is some functionality left to develop, the order management system is not fully functional!
+All of the required functionalities are implemented, I just want to implement some are functionalities from now on.
 
 
 
